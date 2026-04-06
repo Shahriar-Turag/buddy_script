@@ -6,7 +6,7 @@ export type UserBrief = {
   id: string;
   firstName: string;
   lastName: string;
-  /** Absolute path on API host, e.g. /uploads/.... */
+  /** ImgBB HTTPS URL or local `/uploads/...` (proxied via Next rewrite). */
   avatarUrl?: string | null;
   /** Present when listing likers on posts with multi-reactions. */
   reaction?: PostReaction;
@@ -26,6 +26,7 @@ export type CommentNode = {
 export type Post = {
   id: string;
   text: string;
+  /** ImgBB HTTPS URL or `/uploads/...` for legacy/local. */
   imageUrl: string | null;
   visibility: "public" | "private";
   createdAt: string;

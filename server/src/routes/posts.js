@@ -12,7 +12,7 @@ import { encodePostCursor, decodePostCursor } from "../lib/cursor.js";
 import { loadLikeMeta } from "../lib/enrich.js";
 import { notifyIfNeeded } from "../lib/notify.js";
 import { serializeUser } from "../lib/serializeUser.js";
-import { assertAllowedImageFile } from "../utils/verifyUpload.js";
+import { urlFromUploadedFile } from "../utils/persistUpload.js";
 
 const router = Router();
 const writeLimiter = rateLimit({
@@ -266,9 +266,8 @@ router.post(
       }
 
       let imageUrl = null;
-      if (req.file?.path) {
-        await assertAllowedImageFile(req.file.path);
-        imageUrl = `/uploads/${req.file.filename}`;
+      if (req.file) {
+        imageUrl = await urlFromUploadedFile(req.file);
       }
 
       const post = await Post.create({

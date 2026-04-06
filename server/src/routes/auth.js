@@ -14,7 +14,7 @@ import {
   CSRF_COOKIE_NAME,
   csrfCookieOptions,
 } from "../lib/csrf.js";
-import { assertAllowedImageFile } from "../utils/verifyUpload.js";
+import { urlFromUploadedFile } from "../utils/persistUpload.js";
 
 const router = Router();
 
@@ -123,8 +123,10 @@ router.patch(
       if (!req.file) {
         return res.status(400).json({ error: "Image required (form field name: avatar)" });
       }
-      await assertAllowedImageFile(req.file.path);
-      const avatarUrl = `/uploads/${req.file.filename}`;
+      const avatarUrl = await urlFromUploadedFile(req.file);
+      if (!avatarUrl) {
+        return res.status(400).json({ error: "Could not process image" });
+      }
       const user = await User.findByIdAndUpdate(req.userId, { avatarUrl }, { new: true }).lean();
       if (!user) {
         res.clearCookie(COOKIE_NAME, { ...cookieOptions(), maxAge: 0 });

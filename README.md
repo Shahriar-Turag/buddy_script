@@ -101,12 +101,12 @@ Next.js **rewrites** proxy `/api/*` and `/uploads/*` to the Express server so th
 
 ## Repository layout
 
-| Path       | Role                                      |
-|-----------|-------------------------------------------|
-| `web/`    | Next.js frontend                          |
-| `server/` | Express + Mongoose API                    |
-| `assets/` | Original static assets (also copied under `web/public/assets` for images/JS) |
-| `web/src/styles/design/` | Bundled copy of theme CSS (Next bundler requirement) |
+| Path                     | Role                                                                         |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| `web/`                   | Next.js frontend                                                             |
+| `server/`                | Express + Mongoose API                                                       |
+| `assets/`                | Original static assets (also copied under `web/public/assets` for images/JS) |
+| `web/src/styles/design/` | Bundled copy of theme CSS (Next bundler requirement)                         |
 
 ## Deliverables checklist (for your submission)
 

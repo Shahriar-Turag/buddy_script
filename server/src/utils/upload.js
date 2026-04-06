@@ -2,6 +2,7 @@ import multer from "multer";
 import path from "path";
 import { randomBytes } from "crypto";
 import fs from "fs";
+import { env } from "../config/env.js";
 
 /** Vercel serverless only allows reliable writes under /tmp. */
 export function getUploadDir() {
@@ -22,7 +23,7 @@ export function ensureUploadDir() {
   }
 }
 
-const storage = multer.diskStorage({
+const diskStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     ensureUploadDir();
     cb(null, getUploadDir());
@@ -36,6 +37,12 @@ const storage = multer.diskStorage({
   },
 });
 
+const memoryStorage = multer.memoryStorage();
+
+function pickStorage() {
+  return env.imgbbApiKey?.trim() ? memoryStorage : diskStorage;
+}
+
 function fileFilter(_req, file, cb) {
   const allowed = /^image\/(jpeg|png|webp|gif)$/;
   if (allowed.test(file.mimetype)) {
@@ -46,7 +53,7 @@ function fileFilter(_req, file, cb) {
 }
 
 export const uploadImage = multer({
-  storage,
+  storage: pickStorage(),
   limits: { fileSize: 5 * 1024 * 1024, files: 1 },
   fileFilter,
 });

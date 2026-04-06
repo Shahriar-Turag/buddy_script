@@ -1,5 +1,5 @@
 import fs from "fs";
-import { fileTypeFromFile } from "file-type";
+import { fileTypeFromFile, fileTypeFromBuffer } from "file-type";
 
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
@@ -14,6 +14,16 @@ export async function assertAllowedImageFile(filePath) {
     } catch {
       /* ignore */
     }
+    const err = new Error("File type not allowed");
+    err.code = "INVALID_FILE_TYPE";
+    throw err;
+  }
+}
+
+/** Same checks for in-memory multipart (e.g. ImgBB path). */
+export async function assertAllowedImageBuffer(buffer) {
+  const type = await fileTypeFromBuffer(buffer);
+  if (!type || !ALLOWED.has(type.mime)) {
     const err = new Error("File type not allowed");
     err.code = "INVALID_FILE_TYPE";
     throw err;

@@ -16,10 +16,18 @@ export const env = {
   jwtSecret: required("JWT_SECRET", "dev-only-secret-replace-in-production-min-32"),
   corsOrigin: required("CORS_ORIGIN", "http://localhost:3000"),
   nodeEnv: required("NODE_ENV", "development"),
+  /** When set, avatars and post images are stored on ImgBB (recommended on Vercel). */
+  imgbbApiKey: process.env.IMGBB_API_KEY ?? "",
 };
 
 if (env.nodeEnv === "production" && env.jwtSecret.length < 32) {
   console.error(
     "[env] JWT_SECRET must be at least 32 characters in production — set it in Vercel; login/register will fail until fixed"
+  );
+}
+
+if (process.env.VERCEL === "1" && !env.imgbbApiKey?.trim()) {
+  console.warn(
+    "[env] IMGBB_API_KEY is unset — uploads use /tmp on Vercel and disappear between runs. Set IMGBB_API_KEY for persistent images."
   );
 }
