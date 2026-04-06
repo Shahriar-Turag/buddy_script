@@ -19,5 +19,7 @@ export const env = {
 };
 
 if (env.nodeEnv === "production" && env.jwtSecret.length < 32) {
-  throw new Error("JWT_SECRET must be at least 32 characters in production");
+  console.error(
+    "[env] JWT_SECRET must be at least 32 characters in production — set it in Vercel; login/register will fail until fixed"
+  );
 }

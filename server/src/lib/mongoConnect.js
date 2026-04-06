@@ -15,9 +15,18 @@ export async function connectMongoOnce() {
     return mongoose.connection;
   }
   if (!cache.promise) {
-    cache.promise = mongoose.connect(env.mongoUri);
+    cache.promise = mongoose.connect(env.mongoUri).catch((e) => {
+      cache.promise = null;
+      console.error("[mongo] connect failed:", e?.message || e);
+      throw e;
+    });
   }
-  await cache.promise;
+  try {
+    await cache.promise;
+  } catch (e) {
+    cache.promise = null;
+    throw e;
+  }
   cache.conn = mongoose.connection;
   return cache.conn;
 }

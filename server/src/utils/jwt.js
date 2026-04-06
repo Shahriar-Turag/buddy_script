@@ -3,7 +3,16 @@ import { env } from "../config/env.js";
 
 const COOKIE_NAME = "buddy_token";
 
+function assertJwtReadyForSigning() {
+  if (env.nodeEnv === "production" && env.jwtSecret.length < 32) {
+    const err = new Error("JWT_SECRET must be at least 32 characters in production");
+    err.statusCode = 503;
+    throw err;
+  }
+}
+
 export function signToken(userId) {
+  assertJwtReadyForSigning();
   return jwt.sign({ sub: userId }, env.jwtSecret, {
     expiresIn: "7d",
     issuer: "buddy-api",
@@ -12,6 +21,9 @@ export function signToken(userId) {
 }
 
 export function verifyToken(token) {
+  if (env.nodeEnv === "production" && env.jwtSecret.length < 32) {
+    return null;
+  }
   try {
     const payload = jwt.verify(token, env.jwtSecret, {
       issuer: "buddy-api",
