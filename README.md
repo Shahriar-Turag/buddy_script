@@ -93,6 +93,12 @@ Next.js **rewrites** proxy `/api/*` and `/uploads/*` to the Express server so th
 - Point `CORS_ORIGIN` and `API_PROXY_TARGET` at your real web origin.
 - Consider moving uploads to object storage (S3, etc.) and tightening CSP.
 
+### Vercel (split frontend + API)
+
+- **API project** (e.g. `buddy-script-eta`): set **Root Directory** to `server` if the repo is monorepo-style. The repo includes `server/vercel.json` and `server/api/server.js` so Express runs as a serverless function (long-running `app.listen` alone is not enough on Vercel). Uploads use `/tmp` when `VERCEL` is set (files are ephemeral).
+- **Web project** (e.g. `buddyscriptfrontend`): set **`API_PROXY_TARGET`** to your API origin (no trailing slash), e.g. `https://buddy-script-eta.vercel.app`. The build **fails** if `VERCEL=1` and this var is missing, so you catch misconfiguration before deploy.
+- After changing env vars on either project, **redeploy** so Next picks up `API_PROXY_TARGET` at build time.
+
 ## Repository layout
 
 | Path       | Role                                      |
