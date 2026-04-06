@@ -8,7 +8,8 @@ import { sanitizeBody } from "./middleware/sanitizeBody.js";
 import { csrfGuard } from "./middleware/csrfGuard.js";
 import multer from "multer";
 import { env } from "./config/env.js";
-import { ensureUploadDir } from "./utils/upload.js";
+import { ensureUploadDir, getUploadDir } from "./utils/upload.js";
+import { connectMongoOnce } from "./lib/mongoConnect.js";
 import authRoutes from "./routes/auth.js";
 import postsRoutes from "./routes/posts.js";
 import commentsRoutes from "./routes/comments.js";
@@ -20,6 +21,15 @@ export function createApp() {
   const app = express();
 
   app.set("trust proxy", 1);
+
+  app.use(async (req, res, next) => {
+    try {
+      await connectMongoOnce();
+      next();
+    } catch (e) {
+      next(e);
+    }
+  });
 
   app.use(
     helmet({
@@ -54,7 +64,7 @@ export function createApp() {
 
   app.use(hpp());
 
-  const uploadsPath = path.join(process.cwd(), "uploads");
+  const uploadsPath = getUploadDir();
   app.use(
     "/uploads",
     express.static(uploadsPath, {

@@ -3,16 +3,30 @@ import path from "path";
 import { randomBytes } from "crypto";
 import fs from "fs";
 
-const uploadDir = path.join(process.cwd(), "uploads");
+/** Vercel serverless only allows reliable writes under /tmp. */
+export function getUploadDir() {
+  if (process.env.VERCEL) {
+    return path.join("/tmp", "buddy-uploads");
+  }
+  return path.join(process.cwd(), "uploads");
+}
 
 export function ensureUploadDir() {
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  const uploadDir = getUploadDir();
+  try {
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+  } catch {
+    /* ignore — some hosts restrict fs; multer may still fail at upload time */
   }
 }
 
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
+  destination: (_req, _file, cb) => {
+    ensureUploadDir();
+    cb(null, getUploadDir());
+  },
   filename: (_req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
     const safeExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].includes(ext)

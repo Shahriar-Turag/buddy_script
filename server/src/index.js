@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
 import { env } from "./config/env.js";
 import { createApp } from "./app.js";
+import { connectMongoOnce } from "./lib/mongoConnect.js";
 
 async function main() {
-  await mongoose.connect(env.mongoUri);
+  await connectMongoOnce();
   console.log("[db] connected");
 
   const app = createApp();
