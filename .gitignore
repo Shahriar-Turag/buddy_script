@@ -1,0 +1,9 @@
+node_modules/
+.next/
+web/.next/
+uploads/
+.env
+.env.local
+*.log
+web/node_modules/
+server/node_modules/

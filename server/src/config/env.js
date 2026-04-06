@@ -1,0 +1,23 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
+function required(name, fallback = "") {
+  const v = process.env[name] ?? fallback;
+  if (!v && process.env.NODE_ENV !== "test") {
+    console.warn(`[env] Missing ${name}; using empty string`);
+  }
+  return v;
+}
+
+export const env = {
+  port: Number(required("PORT", "4000")) || 4000,
+  mongoUri: required("MONGODB_URI", "mongodb://127.0.0.1:27017/buddy_social"),
+  jwtSecret: required("JWT_SECRET", "dev-only-secret-replace-in-production-min-32"),
+  corsOrigin: required("CORS_ORIGIN", "http://localhost:3000"),
+  nodeEnv: required("NODE_ENV", "development"),
+};
+
+if (env.nodeEnv === "production" && env.jwtSecret.length < 32) {
+  throw new Error("JWT_SECRET must be at least 32 characters in production");
+}

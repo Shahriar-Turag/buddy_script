@@ -1,0 +1,12 @@
+# Local MongoDB for development — run: docker compose up -d
+# Then use MONGODB_URI=mongodb://127.0.0.1:27017/buddy_social in server/.env
+services:
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - buddy_mongo_data:/data/db
+
+volumes:
+  buddy_mongo_data:
