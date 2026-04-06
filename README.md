@@ -107,9 +107,3 @@ Next.js **rewrites** proxy `/api/*` and `/uploads/*` to the Express server so th
 | `server/`                | Express + Mongoose API                                                       |
 | `assets/`                | Original static assets (also copied under `web/public/assets` for images/JS) |
 | `web/src/styles/design/` | Bundled copy of theme CSS (Next bundler requirement)                         |
-
-## Deliverables checklist (for your submission)
-
-- Push this project to **GitHub** and share the link.
-- Record a **YouTube** walkthrough (unlisted/private) covering register, login, feed, public/private posts, likes, comments/replies.
-- Optional: deploy API + web (e.g. Railway + Vercel) and set env vars to match the deployment URLs.
